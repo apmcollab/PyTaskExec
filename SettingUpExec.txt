@@ -1,0 +1,25 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2014-04-21T10:23:02-07:00
+
+====== SettingUpExec ======
+Created Monday 21 April 2014
+
+* Copied previous xml file containing task specification to //Task//.xml file. 
+
+* Modified comments in  //Task//.xml  to specify the explicit commands used to create the task database and run PyTaskExec. 
+
+* Copied the programs input data xml  file to directory for the runs. //ProgramData//.xml. 
+	* Create a copy of this file with  *.tpl extension, //ProgramData//.tpl.
+	* Modified t//ProgramData//.tpl file to be a python template.  This means specifying the values to be substituted with a $ prefix. Typically, this specification will take the form  $//parameterName //where parameterName is the parameter. 
+
+* In//Task//.xml specified the RunParemeters to be all of the template parameters in the ProgramData.tpl file, along with their default values. 
+
+* In Task.xml specified output values to be collected. If using default output handler, then the output data being collected must have the form 
+		   //Output_Data_Name//  : //Value  //
+	   on a single line. 
+	
+* In Task.xml specify the executable (using a full path name) command, the name of the file constructed from the template file (runFileName) and the input template file (templateFileName).
+
+* In Task.xml specify any additional data files needed, as well as the name of the output handler. 
+

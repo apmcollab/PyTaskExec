@@ -1,0 +1,12 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-08-20T12:43:21-07:00
+
+====== Python3version ======
+Created Thursday 20 August 2015
+
+08/20/2015
+
+Currently PyTaskExec scripts only work when Python 2.7. Even though can invoke the TaskDbBuilder and ExecRun using python3, the python executable is /usr/bin/python. 
+
+In the future this will have to be fixed. One of the problems that will arise is that unicode is not a specified type in Python3, and one will have to accomodate the fact that in Python3, str replaces unicode and bytes replaces str. 

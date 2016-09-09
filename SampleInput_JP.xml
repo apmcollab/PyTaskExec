@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<TaskBuilderData>
+
+<!-- 
+Spcification of the loop structure that will create the tasks. The loop 
+structure is reflected in the tag structure. Auxillary paramters are specified 
+by specifyting parameters specified as child tags. 
+ -->
+
+<taskRanges>
+<center_gate>
+<min>  -.5 	</min>
+<max>  0.0 	</max>
+<increment> .1 </increment>
+</center_gate>
+</taskRanges>
+
+
+<!-- 
+Job Data. Data values required to run the simulation and required to 
+process the output
+<outputHandlerScript value = "SingleDotT1Handler.py" type = "file" />
+-->
+              
+<jobData> 
+<executableCommand   value = "H:\CRA\QWork\Quist2K\RunWellXD\RunOneD SingleDotT1.qdt"  />
+<runFileName         value = "SingleDotT1.qdt" />
+<runFileTemplate     value = "SingleDotT1.tpl"  type = "file" /> 
+<dataFileForRun      value = "SampleDataFile.txt" type = "file" />
+<outputHandlerScript value = "H:\CRA\PyWork\PyTaskExec_D\SingleDotT1Handler.py"  />
+<runDimension        value = "3" />
+<maxEigenvalues      value = "3" />
+</jobData>
+
+<!--
+Run parameters. Each of the specified parameters corresponds to a substitution string
+in the input template file. For a parameter named varName, the substitution string will
+be of the form $varName. The names are case-sensitive. Also the type of the paramter is
+determined by the nominal values specified, so floats must have a decimal point specified.
+-->
+	
+<runParameters>
+<center_gate        value ="0.0"                             />   
+<fixedChargeCount   value ="1"                               />     
+<upperWellType      value ="quantum"     type = "string"     />    
+<upperWellSepFlag   value ="1"                               />     
+<panel_density       value ="0.1"                             />
+</runParameters>
+
+<!--
+Output data Each of the specified variables corresponds to a value that will be extracted
+from the simulation output. The type of the parameter is specified or detected from a nominal value
+specified. 
+-->
+
+<outputData>
+<clockTime                  type ="double"   />
+<finalResidual              type ="double"   />
+<selfConsistentIterations   type ="int"      />
+<totalFunctionEvaluations   type ="int"      />
+<totalEigensystemTime       type ="double"   />
+<totalPotentialTime         type ="double"   />
+<upperWellStateCount        type ="int"      />
+<UpperEig_1                type ="float"    />
+<UpperEig_2                type ="float"    />
+<UpperEig_3                type ="float"    />
+</outputData>
+</TaskBuilderData>
+
+

@@ -1,0 +1,13 @@
+.project
+.pydevprojects
+.pydevproject
+.zim
+*.pyc
+*.cmd
+*.db
+*.orig
+Experiment.py
+Support
+.hg
+.hgignore
+.hgsub
