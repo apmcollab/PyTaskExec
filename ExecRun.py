@@ -397,7 +397,7 @@ class ExecRun(object):
     #
     # Create run command using the full path to the python command 
     #   
-      print( type(self.standardOptions['runTableName']))
+    # print( type(self.standardOptions['runTableName']))
       runCommand = pythonCommand + ' ' + execProg  + ' -d ' + self.standardOptions['runDBname'] \
                                                + ' -t ' + self.standardOptions['runTableName']
       if(self.standardOptions['outputDir'] != ''): 
