@@ -64,6 +64,84 @@ class parseTaskXML(object):
     return False
 
 
+  def getRandomTaskList(self,taskRangesElement,runParameters,paramList):
+  
+    # Check to see if the parameter task list specifies a random task generation 
+    
+    continueFlag = False
+    for taskElement in taskRangesElement.childNodes :
+      if (taskElement.nodeType is xml.dom.Node.ELEMENT_NODE) and (taskElement.nodeName == "Random"):
+        continueFlag = True
+        
+    if(continueFlag == False) : return False
+        
+    for taskElement in taskRangesElement.childNodes :
+      if (taskElement.nodeType is xml.dom.Node.ELEMENT_NODE) and (taskElement.nodeName == "Random"):
+        
+        
+        if(len(taskElement.getElementsByTagName('distribution')) == 0):
+          print("default uniform")
+        else:
+          distributionElement = taskElement.getElementsByTagName('distribution')[0]
+          # For  <distribution value = "chebyshev" />
+          if(len(distributionElement.getAttribute('value')) != 0):
+            print((distributionElement.getAttribute('value')).strip())
+          # For <distribution> chebyshev </distribution>
+          else:
+            print((distributionElement.childNodes[0].nodeValue).strip())
+          #
+          # Check for supported specification of distribution 
+   
+        if(len(taskElement.getElementsByTagName('sampleCount')) == 0):
+          print("error message")
+        else:
+          sampleCountElement = taskElement.getElementsByTagName('sampleCount')[0]
+          # For  <sampleCount value = "1000" />
+          if(len(sampleCountElement.getAttribute('value')) != 0):
+            print(self.getTypedValue( (sampleCountElement.getAttribute('value')).strip()))
+          # For <sampleCount> 1000 </sampleCount>
+          else:
+            print(self.getTypedValue((sampleCountElement.childNodes[0].nodeValue).strip()))
+          #
+          # Check for supported specification of distribution 
+                 
+      if (taskElement.nodeType is xml.dom.Node.ELEMENT_NODE) and (taskElement.nodeName in runParameters):
+        print(taskElement)
+        # Add parameter name that is being varied by assignment to a null value
+        
+        paramList[taskElement.nodeName] = ''
+        
+        # 
+        for childElement in  taskElement.childNodes:
+          if (childElement.nodeType is xml.dom.Node.ELEMENT_NODE):
+            if(childElement.nodeName == 'min'):
+                if(len(childElement.getAttribute('value')) == 0) :
+                  pMin = self.getTypedValue(childElement.childNodes[0].nodeValue,\
+                            childElement.getAttribute('type'))
+                else:
+                  pMin = self.getTypedValue(childElement.getAttribute('value'),\
+                            childElement.getAttribute('type'))
+            if(childElement.nodeName == 'max'): 
+              if(len(childElement.getAttribute('value')) == 0) :
+                pMax = self.getTypedValue(childElement.childNodes[0].nodeValue,\
+                            childElement.getAttribute('type'))
+              else:
+                pMax = self.getTypedValue(childElement.getAttribute('value'),\
+                            childElement.getAttribute('type'))
+        print(pMin)
+        print(pMax)
+        
+        
+      # Create some bogus tasks to see if I can set the task list appropriately 
+      
+    for i in range(0,5):
+      runP = deepcopy(runParameters)
+      print(runP)
+      self.taskList.append(runP)
+
+    return True
+    
+
   def getMinMaxLoopList(self,parameter, element):
     """
     Creates the list of parameters and associated values 

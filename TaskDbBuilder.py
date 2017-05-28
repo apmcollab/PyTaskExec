@@ -175,7 +175,8 @@ class TaskDbBuilder(object):
 
     if(taskBuilderInput.getElementsByTagName('taskRanges').length == 0):
       return 0  
-      
+    
+
     print() 
     print('########################################################')
     print('       Database    --> %s                               ' % runDBname)
@@ -189,10 +190,18 @@ class TaskDbBuilder(object):
     taskCount = []
     taskCount.append(0)
     paramList = {}
+    
+#
+#   Developing code for creation of random distribution of 
+#   of parameter tasks
+#
+#
+    if(parseTask.getRandomTaskList(taskRangesElement,self.runParameters,paramList)):
+      print("Random task specification")
+    else:
+      for taskElements in taskRangesElement.childNodes:
+        parseTask.generateTasks(taskElements,self.runParameters,taskCount,paramList)
 
-    for taskElements in taskRangesElement.childNodes:
-      parseTask.generateTasks(taskElements,self.runParameters,taskCount,paramList)
-  
 #parseTask.taskList now contains the listing of the tasks
      
     taskIndex = 0

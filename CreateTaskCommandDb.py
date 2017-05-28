@@ -122,7 +122,6 @@ class CreateTaskCommandDb(object):
     f.close()
     taskTemplate = Template(taskFileContents)
 #
-#   Create orbital integrals input file 
 #
     xmlParams = {}
     xmlParams['executableCommand']         = self.standardInputs['command'] 
@@ -148,8 +147,8 @@ class CreateTaskCommandDb(object):
     self.taskDbBuilder.setStandardOptions(options)
     self.taskDbBuilder.run()
 #
-#
 #   Fill the database task for each task in the original task database
+#
     sqCon  = sqlite3.connect(cmdTaskDb)
     sqCon.isolation_level = None
     sqDB   = sqCon.cursor()
