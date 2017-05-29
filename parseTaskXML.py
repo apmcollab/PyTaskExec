@@ -211,7 +211,7 @@ class parseTaskXML(object):
     # Create random data using a uniform distribution 
     
     if(distributionType.lower() == u'uniform'.lower()):
-      for i in range(0,5):
+      for i in range(0,sampleSize):
         runP = deepcopy(runParameters)
         for p in paramList :
           runP[p] = randomGenArray[p].uniform(pMin[p],pMax[p])
