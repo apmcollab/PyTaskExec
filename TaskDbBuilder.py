@@ -196,9 +196,7 @@ class TaskDbBuilder(object):
 #   of parameter tasks
 #
 #
-    if(parseTask.getRandomTaskList(taskRangesElement,self.runParameters,paramList)):
-      print("Random task specification")
-    else:
+    if(parseTask.getRandomTaskList(taskRangesElement,self.runParameters,paramList) == False):
       for taskElements in taskRangesElement.childNodes:
         parseTask.generateTasks(taskElements,self.runParameters,taskCount,paramList)
 

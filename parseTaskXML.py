@@ -1,4 +1,7 @@
 import xml.dom.minidom
+import random
+import math
+import sys
 from copy import deepcopy
 
 class parseTaskXML(object):
@@ -63,7 +66,32 @@ class parseTaskXML(object):
       if(child.nodeName == childName): return True
     return False
 
+  '''
+  <!-- -->
+  <!-- Sample task specification for random task generation -->
+  <!-- -->
 
+  <taskRanges>
+  <Random>
+    <distribution> chebyshev </distribution>   <!-- uniform, chebyshev --> 
+    <sampleSize value = "10"  />
+    <seed value = "314257879" />
+  </Random>
+  <BoxGate>
+    <min>  -0.1 </min>
+    <max>   0.0 </max>
+  </BoxGate>
+  <RightDot>
+    <min>  -0.2</min>
+    <max>   0.0 </max>
+  </RightDot>
+  <LeftDot>
+    <min>  -0.4 </min>
+    <max>   0.0 </max>
+    </LeftDot>
+  </taskRanges>
+  
+  '''
   def getRandomTaskList(self,taskRangesElement,runParameters,paramList):
   
     # Check to see if the parameter task list specifies a random task generation 
@@ -74,70 +102,133 @@ class parseTaskXML(object):
         continueFlag = True
         
     if(continueFlag == False) : return False
-        
+    
+    
+    pMin = {}
+    pMax = {}
+    
     for taskElement in taskRangesElement.childNodes :
       if (taskElement.nodeType is xml.dom.Node.ELEMENT_NODE) and (taskElement.nodeName == "Random"):
         
-        
         if(len(taskElement.getElementsByTagName('distribution')) == 0):
-          print("default uniform")
-        else:
+          distributionType = "uniform"
+          
+        else:  # For  <distribution value = "distributionType" />
           distributionElement = taskElement.getElementsByTagName('distribution')[0]
-          # For  <distribution value = "chebyshev" />
+    
           if(len(distributionElement.getAttribute('value')) != 0):
-            print((distributionElement.getAttribute('value')).strip())
-          # For <distribution> chebyshev </distribution>
-          else:
-            print((distributionElement.childNodes[0].nodeValue).strip())
+            distributionType = (distributionElement.getAttribute('value')).strip()
+            #print((distributionElement.getAttribute('value')).strip())
+            
+          else: # For <distribution> distributionType </distribution>
+            distributionType = (distributionElement.childNodes[0].nodeValue).strip()
+            #print((distributionElement.childNodes[0].nodeValue).strip())
           #
           # Check for supported specification of distribution 
    
-        if(len(taskElement.getElementsByTagName('sampleCount')) == 0):
-          print("error message")
+
+        if( (distributionType.lower() != u'uniform'.lower()) and (distributionType.lower() != u'chebyshev'.lower())):
+          print('parseTaskXML Error:')
+          print('Unsupported random distribution')
+          print('Distribution specified : ' + distributionType)
+          print("Only uniform and chebyshev distributions currently specified")
+          exit()
+          
+          
+        if(len(taskElement.getElementsByTagName('sampleSize')) == 0):
+          print('parseTaskXML Error:')
+          print('sampleSize parameter not specified')
+          exit()
         else:
-          sampleCountElement = taskElement.getElementsByTagName('sampleCount')[0]
-          # For  <sampleCount value = "1000" />
-          if(len(sampleCountElement.getAttribute('value')) != 0):
-            print(self.getTypedValue( (sampleCountElement.getAttribute('value')).strip()))
-          # For <sampleCount> 1000 </sampleCount>
-          else:
-            print(self.getTypedValue((sampleCountElement.childNodes[0].nodeValue).strip()))
-          #
-          # Check for supported specification of distribution 
+          sampleSizeElement = taskElement.getElementsByTagName('sampleSize')[0]
+          
+          if(len(sampleSizeElement.getAttribute('value')) != 0): # For  specification <sampleSize value = "10" />
+            sampleSize = self.getTypedValue((sampleSizeElement.getAttribute('value')).strip())
+            #print(self.getTypedValue((sampleSizeElement.getAttribute('value')).strip()))
+            
+          
+          else: # For specification <sampleSize> 1000 </sampleSize>
+            sampleSize = self.getTypedValue((sampleCountElement.childNodes[0].nodeValue).strip())
+            #print(self.getTypedValue((sampleCountElement.childNodes[0].nodeValue).strip()))
+            
+        if(len(taskElement.getElementsByTagName('seed')) == 0):
+          intseed = 12876589876532
+        else:
+          seedElement = taskElement.getElementsByTagName('seed')[0]
+          
+          if(len(seedElement.getAttribute('value')) != 0):  # For  <seed value = "1234" />
+            intSeed = self.getTypedValue( (seedElement.getAttribute('value')).strip())
+            #print(self.getTypedValue( (seedElement.getAttribute('value')).strip()))
+          
+          else:   # For <seed> 1234 </seed>
+            intSeed = self.getTypedValue((seedElement.childNodes[0].nodeValue).strip())                                           
+            #print(self.getTypedValue((seedElement.childNodes[0].nodeValue).strip()))
+
                  
       if (taskElement.nodeType is xml.dom.Node.ELEMENT_NODE) and (taskElement.nodeName in runParameters):
-        print(taskElement)
         # Add parameter name that is being varied by assignment to a null value
-        
         paramList[taskElement.nodeName] = ''
         
         # 
+ 
         for childElement in  taskElement.childNodes:
           if (childElement.nodeType is xml.dom.Node.ELEMENT_NODE):
             if(childElement.nodeName == 'min'):
                 if(len(childElement.getAttribute('value')) == 0) :
-                  pMin = self.getTypedValue(childElement.childNodes[0].nodeValue,\
+                  pMinVal = self.getTypedValue(childElement.childNodes[0].nodeValue,\
                             childElement.getAttribute('type'))
                 else:
-                  pMin = self.getTypedValue(childElement.getAttribute('value'),\
+                  pMinVal = self.getTypedValue(childElement.getAttribute('value'),\
                             childElement.getAttribute('type'))
             if(childElement.nodeName == 'max'): 
               if(len(childElement.getAttribute('value')) == 0) :
-                pMax = self.getTypedValue(childElement.childNodes[0].nodeValue,\
+                pMaxVal = self.getTypedValue(childElement.childNodes[0].nodeValue,\
                             childElement.getAttribute('type'))
               else:
-                pMax = self.getTypedValue(childElement.getAttribute('value'),\
+                pMaxVal = self.getTypedValue(childElement.getAttribute('value'),\
                             childElement.getAttribute('type'))
-        print(pMin)
-        print(pMax)
-        
-        
-      # Create some bogus tasks to see if I can set the task list appropriately 
+                
+        pMin[taskElement.nodeName]  = pMinVal
+        pMax[taskElement.nodeName]  = pMaxVal
+    
+    print("")
+    print("-- Random Task List -- \ndistribution : " + distributionType)
+    print("sampleSize   : " + "{0:d}".format(sampleSize))
+    print("seed         : " + "{0:d}".format(intSeed))
+    print("")
+                
+    randomGenArray = {}
+    random.seed(intSeed)
+    
+    # Create random number generators for each component, using a random seed that
+    # is created by the shared random number generator 
+    
+    for p in paramList :
+      seed = random.randint(0,sys.maxint)
+      randomGenArray[p] = random.Random()
+      randomGenArray[p].seed(seed)
       
-    for i in range(0,5):
-      runP = deepcopy(runParameters)
-      print(runP)
-      self.taskList.append(runP)
+    # Create random data using a uniform distribution 
+    
+    if(distributionType.lower() == u'uniform'.lower()):
+      for i in range(0,5):
+        runP = deepcopy(runParameters)
+        for p in paramList :
+          runP[p] = randomGenArray[p].uniform(pMin[p],pMax[p])
+        self.taskList.append(runP)
+        
+    # Create random data using  a chebyshev distribution 
+       
+    if(distributionType.lower() == u'chebyshev'.lower()):
+      for i in range(0,sampleSize):
+        runP = deepcopy(runParameters)
+        for p in paramList :
+          pVal    = randomGenArray[p].uniform(0.0,1.0)
+          pVal    = math.sin((pVal - 0.5)*3.14159265358979323846)
+          runP[p] = pMin[p] + 0.5*(pMax[p] - pMin[p])*(pVal + 1.0)
+        self.taskList.append(runP) 
+            
+    # Create random data using a chebyshev distribution 
 
     return True
     
