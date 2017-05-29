@@ -1,1 +1,78 @@
-This is a sample data file.
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+
+This is a sample xml file 
+
+'''
+<?xml version="1.0" encoding="iso-8859-1"?>
+<TaskBuilderData>
+
+<taskRanges>
+<BoxGate>
+<min>  -0.5 </min>
+<max>   0.000001 </max>
+<increment> 0.25 </increment>
+<RightDot>
+<min>  -0.5 </min>
+<max>   0.000001 </max>
+<increment> 0.25 </increment>
+<LeftDot>
+<min>  -0.5 </min>
+<max>   0.000001 </max>
+<increment> 0.25 </increment>
+<LeftWedge>
+<min>  -0.6 </min>
+<max>   0.000001 </max>
+<increment> 0.3 </increment>
+<RightWedge>
+<min>  -0.6 </min>
+<max>   0.000001 </max>
+<increment> 0.3 </increment>
+<lowerPotential>
+<min> 0.1 </min>
+<max> 0.3 </max>
+<increment> 0.1 </increment>
+</lowerPotential>
+</RightWedge>
+</LeftWedge>
+</LeftDot>
+</RightDot>
+</BoxGate>
+</taskRanges>
+
+<!-- 
+python -m TaskDbBuilder -x ChargeSweep.xml -t ChargeSweep -d ChargeSweep.db   
+python -m ExecRun -d ChargeSweep.db -t ChargeSweep
+-->
+
+<jobData> 
+<executableCommand   value = "/home/anderson/craProg/Qwork/Quist2Kv2/bin/RunThreeD DotBarDot.qdt;/home/anderson/craProg/Qwork/Quist_Gada/ChargeDiagnostic.exe"/>
+<runFileName         value = "DotBarDot.qdt" />
+<runFileTemplate     value = "DotBarDot.tpl"  type = "file" /> 
+<dataFile1           value = "DotBarDot.cif"  type = "file" />
+<outputHandlerScript value = "DefaultOutputHandler.py" />
+</jobData>
+
+
+<runParameters>
+<RightWedge          value = "0.0"/>    
+<LeftWedge           value = "0.0"/>             
+<LeftDot             value = "0.0"/>              
+<RightDot            value = "0.0"/>             
+<BoxGate             value = "0.0"/>               
+<lowerPotential      value = "0.0"/>   
+</runParameters>
+
+
+<outputData>
+<LeftDot_Charge     type="double" />
+<RightDot_Charge    type="double" />
+<BoxGate_Charge     type="double" />
+<base_Density       type="double" />
+<LeftWedge_Density  type="double" />
+<RightWedge_Density type="double" />
+</outputData>
+</TaskBuilderData>
+'''
+
+

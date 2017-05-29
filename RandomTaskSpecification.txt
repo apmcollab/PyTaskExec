@@ -1,0 +1,47 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2017-05-29T09:46:34-07:00
+
+====== RandomTaskSpecification ======
+Created Monday 29 May 2017
+
+A random task specification consists of specifying a Random tag in the taskRanges XML parameter list
+
+'''
+<Random>
+<distribution> chebyshev </distribution> <!-- uniform or chebyshev -->
+<sampleSize value = "10"  />
+<seed value = "314257879" />
+</Random>
+'''
+
+This is then followed by the list of parameters to be varied and the intervals over which the variation is to occur. The latter are specified using the min/max specification that is used for the non-random task specification. 
+
+Sample list 
+
+			''<!-- -->''
+''  <!-- Sample task specification for random task generation -->''
+''  <!-- -->''
+
+''  <taskRanges>''
+''  <Random>''
+''    <distribution> chebyshev </distribution>   <!-- uniform, chebyshev --> ''
+''    <sampleSize value = "10"  />''
+''    <seed value = "314257879" />''
+''  </Random>''
+''  <BoxGate>''
+''    <min>  -0.1 </min>''
+''    <max>   0.0 </max>''
+''  </BoxGate>''
+''  <RightDot>''
+''    <min>  -0.2</min>''
+''    <max>   0.0 </max>''
+''  </RightDot>''
+''  <LeftDot>''
+''    <min>  -0.4 </min>''
+''    <max>   0.0 </max>''
+''    </LeftDot>''
+''  </taskRanges>''
+
+
+
