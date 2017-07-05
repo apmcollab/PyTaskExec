@@ -59,5 +59,21 @@ Specifying the number of  intervals, rather than increments
 <min> 1.0  </min>
 <max> 8.0  </max><intervals> 7 </intervals>
 </extensionFactor>
+
+
 '''
+Specifying specific combinations of values 
+
+''<taskRanges>''
+''<penaltyMinExpo> ''
+''<value> -2  <penaltyMaxExpo value = "-2"/>  </value>  ''
+''<value> -3  <penaltyMaxExpo value = "-3"/>  </value>  ''
+''<value> -4  <penaltyMaxExpo value = "-4"/>  </value>  ''
+''<optLCdescriptorCount> ''
+''<min> 1 </min>''
+''<max> 10 </max>''
+''<increment>1</increment>''
+''</optLCdescriptorCount>''
+''</penaltyMinExpo>''
+''</taskRanges>''
 
