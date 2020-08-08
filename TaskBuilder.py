@@ -353,7 +353,7 @@ class TaskBuilder:
      return val
    
 
-  def insertJobTask(self,sqDB,sqCon,taskData,runParams,outputData):  
+  def insertJobTask(self,sqDB,sqCon,taskData,runParams,outputData): 
     #
     # insert into table
     #

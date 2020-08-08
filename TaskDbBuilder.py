@@ -123,7 +123,7 @@ class TaskDbBuilder(object):
     runTableName = self.standardInputs['task_table']
 
     try :
-      f = open(xmlFile,'rU')
+      f = open(xmlFile,'r')
     except IOError as exception:
       print('                 === Error ===')
       print(" XML file cannot be read") 
