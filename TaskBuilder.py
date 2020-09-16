@@ -52,15 +52,17 @@ def testRunDataFile(runTemplateFile,runData):
   #
   # Verify that the template file is of Unix format 
   # (using construct from crlf.py in Toos/sripts)
-  #
-  if(runFileContents.find("\r\n")):
-       newContents = runFileContents.replace("\r\n", "\n")
-       f = open(runTemplateFile, "wb+")
-       try: 
-        f.write(bytes(newContents,'UTF-8'))
-       except TypeError:
-         f.write(newContents)
-       f.close()
+  # 
+  # Change as of 9/16/2020 - perhaps not needed anymore -
+  # so commented out
+  #if(runFileContents.find("\r\n")):
+  #     newContents = runFileContents.replace("\r\n", "\n")
+  #     f = open(runTemplateFile, "wb+")
+  #     try:
+  #      f.write(bytes(newContents,'UTF-8'))
+  #     except TypeError:
+  #       f.write(newContents)
+  #     f.close()
   #
   # Check to make sure all of the parameters that are to be
   # substituted have template entries
