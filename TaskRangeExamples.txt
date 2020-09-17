@@ -68,12 +68,12 @@ Specifying specific combinations of values
 ''<penaltyMinExpo> ''
 ''<value> -2  <penaltyMaxExpo value = "-2"/>  </value>  ''
 ''<value> -3  <penaltyMaxExpo value = "-3"/>  </value>  ''
-''<value> -4  <penaltyMaxExpo value = "-4"/>  </value>  ''
-''<optLCdescriptorCount> ''
-''<min> 1 </min>''
-''<max> 10 </max>''
-''<increment>1</increment>''
+<value> -4  <penaltyMaxExpo value = "-4"/>  </value>  
+<optLCdescriptorCount> 
+<min> 1 </min>
+<max> 10 </max>
+<increment>1</increment>
 ''</optLCdescriptorCount>''
-''</penaltyMinExpo>''
+'</penaltyMinExpo>
 ''</taskRanges>''
 
