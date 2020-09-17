@@ -8,7 +8,5 @@
 *.orig
 Experiment.py
 Support
-.hg
-.hgignore
-.hgsub
 Testing
+boneyard
