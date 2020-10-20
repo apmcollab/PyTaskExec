@@ -392,10 +392,10 @@ class ExecRun(object):
             if(os.path.isfile(pythonProg)): 
               pythonCommand = pythonProg
       else:
-        pythonCommand= (subprocess.Popen('which python',shell=True,stdout=subprocess.PIPE).communicate()[0]).decode(encoding='UTF-8')
+        pythonCommand= (subprocess.Popen('which python3',shell=True,stdout=subprocess.PIPE).communicate()[0]).decode(encoding='UTF-8')
         pythonCommand= pythonCommand.replace('\n','')
         if(not os.path.isfile( pythonCommand)):
-          print('python command not Found. ')
+          print('python3 command not Found. ')
           print('Search returned : ' + pythonCommand) 
           print('   === Program Halted ===')
           exit() 
