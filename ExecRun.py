@@ -395,10 +395,13 @@ class ExecRun(object):
         pythonCommand= (subprocess.Popen('which python3',shell=True,stdout=subprocess.PIPE).communicate()[0]).decode(encoding='UTF-8')
         pythonCommand= pythonCommand.replace('\n','')
         if(not os.path.isfile( pythonCommand)):
-          print('python3 command not Found. ')
-          print('Search returned : ' + pythonCommand) 
-          print('   === Program Halted ===')
-          exit() 
+          pythonCommand= (subprocess.Popen('which python',shell=True,stdout=subprocess.PIPE).communicate()[0]).decode(encoding='UTF-8')
+          pythonCommand= pythonCommand.replace('\n','')
+          if(not os.path.isfile( pythonCommand)):
+            print('full path to python command not Found. ')
+            print('Search returned : ' + pythonCommand) 
+            print('   === Program Halted ===')
+            exit() 
     #
     #  Find the path to the TaskExec.py 
     #
