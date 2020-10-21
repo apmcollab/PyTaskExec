@@ -1,7 +1,5 @@
-from __future__ import print_function
 import os
 from string import Template
-
 import time
 import datetime
 import sqlite3
@@ -28,10 +26,7 @@ import random
 
 
 from Classfetch import _get_func,_get_class
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import StringIO
 
 
 def getFullPath(fileName):
@@ -157,6 +152,7 @@ def checkForExistingDatabase(sqDB,sqCon,runDBname,runTableName,noCheck):
     
 class TaskBuilder:
   def __init__(self,sqDB,sqCon,runTableName,taskData,jobData,runParams,outputData):
+    self.sqDB         = sqDB
     self.runTableName = runTableName
     #
     # Create keys and additional job data 
@@ -335,11 +331,11 @@ class TaskBuilder:
         return
       except ImportError as exception:
         print('Failed to load output handler specified by ' + outputHandlerScript)
-        print(exception.message)
+        print(exception)
         exit()
       except AttributeError as exception:
         print('Failed to load output handler specified by ' + outputHandlerScript)
-        print(exception.message)
+        print(exception)
         exit()
     #
     # Checking the class inserted into the database
@@ -434,8 +430,8 @@ class TaskBuilder:
           sqMessage = self.sqDB.execute(showString).split("\r\n") 
         else:
           sqMessage = self.sqDB.execute(showString).split("\n") 
-     except sqLiteError as e:                   
-        print(e.message)
+     except sqlite3.Error as e:                   
+        print(e)
         
      runDBname  = os.path.basename(runDBname)
      

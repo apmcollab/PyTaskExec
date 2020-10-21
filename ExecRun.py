@@ -1,4 +1,3 @@
-from __future__ import print_function
 import optparse
 import subprocess
 import os
@@ -8,12 +7,7 @@ from socket import gethostname
 import sys
 from random import Random
 from shutil import copy
-
-import threading
-try:
-    import queue
-except ImportError:
-    import Queue as queue
+import threading, queue
 
 from TaskExecThread import TaskExecThread
 
@@ -78,7 +72,6 @@ class ExecRun(object):
     
     print('                 === Error ===')
     print(fileName + " not found") 
-    print(exception)
     exit() 
 
   def importBatchSubmitClass(self,batchClassName):
@@ -86,7 +79,7 @@ class ExecRun(object):
       from Classfetch import _get_func,_get_class    #class loader 
     except ImportError as exception:
       print('Failed to load required modules Classfetch ') 
-      print(exception.message)
+      print(exception)
       exit()
     
     os.sys.path.append(os.path.dirname(batchClassName))
@@ -97,11 +90,11 @@ class ExecRun(object):
       return batchClass
     except ImportError as exception:
       print('Failed to load class ' + outputClassName)
-      print(exception.message)
+      print(exception)
       exit()
     except AttributeError as exception:
       print('Failed to load class ' + outputClassName)
-      print(exception.message)
+      print(exception)
       exit()
   
       
@@ -455,10 +448,7 @@ class ExecRun(object):
 #   to the response queue. The main thread is blocked by the response_queue.get()
 #   call until TaskExec threads have posted. 
 #   
-      try:
-        response_queue = Queue.Queue()
-      except NameError:
-        response_queue = queue.Queue()
+      response_queue = queue.Queue()
       
       runCommand = runCommand.split(' ')
       runCommand.append('-e')  
@@ -533,7 +523,7 @@ class ExecRun(object):
     # job to the cluster
     #  
       if(threadStartFlag):
-        response_queue = Queue.Queue()
+        response_queue = queue.Queue()
         
       for i in range(1,int(self.standardOptions['nExec'])+1):
         uffix     =  self.getRandomName()

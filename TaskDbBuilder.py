@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import subprocess
 import time
@@ -36,11 +35,13 @@ from ParseTaskXML import parseTaskXML
 
 class TaskDbBuilder(object): 
   def __init__(self):
-    self.standardInputs = {}
-    self.standardInputs['force']               =  False
-    self.standardInputs['runDBname']           = 'Task.db'
-    self.standardInputs['xmlTaskFile']         =  None
-    self.standardInputs['includePaths']         =  None
+    self.standardInputs  = {}
+    self.standardOptions = {}
+    self.standardInputs['force']         =  False
+    self.standardInputs['runDBname']     = 'Task.db'
+    self.standardInputs['xmlTaskFile']   =  None
+    self.standardInputs['includePaths']  =  None
+    self.standardOptions['includePaths']  = None
     self.taskData = {}
 
   def parseStandardInputs(self):
@@ -113,7 +114,7 @@ class TaskDbBuilder(object):
          self.standardInputs['force'] = options['force']
          
     if('includePaths' in options):
-     standardOptions['includePaths'] = options['includePaths']
+     self.standardOptions['includePaths'] = options['includePaths']
      includePaths = options['includePaths'].split(';')
      for i in range(len(includePaths)):
          os.sys.path.append(includePaths[i])

@@ -167,7 +167,7 @@ class parseTaskXML(object):
             
           
           else: # For specification <sampleSize> 1000 </sampleSize>
-            sampleSize = self.getTypedValue((sampleCountElement.childNodes[0].nodeValue).strip())
+            sampleSize = self.getTypedValue((sampleSizeElement.childNodes[0].nodeValue).strip())
             #print(self.getTypedValue((sampleCountElement.childNodes[0].nodeValue).strip()))
             
         if(len(taskElement.getElementsByTagName('seed')) == 0):
@@ -223,7 +223,7 @@ class parseTaskXML(object):
     # is created by the shared random number generator 
     
     for p in paramList :
-      seed = random.randint(0,sys.maxint)
+      seed = random.randint(0,sys.maxsize)
       randomGenArray[p] = random.Random()
       randomGenArray[p].seed(seed)
       

@@ -6,9 +6,9 @@ Python scripts to:
 (II) Carry out the runs specified in the database and collect designated output results. 
  
 ### Prerequisites
-python3
+python3 (Not backward compatible with Python 2.7)
 ### Versioning
-Release : 1.0.1
+Release : 1.0.2
 ### Date 
 Oct. 20, 2020 
 ### Authors

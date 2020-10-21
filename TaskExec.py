@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 import shutil
 import string
@@ -10,9 +9,9 @@ from   string import Template
 import optparse
 from socket import gethostname
 import pickle
-import StringIO
+from io import StringIO
 import sys
-import new
+from types import *
 
 #############################################################################
 #
@@ -34,11 +33,11 @@ import new
 #############################################################################
 
 
-from Classfetch import _get_func,_get_class
+from Classfetch import _get_func, _get_class
 
 import sqlite3
 
-class TaskExec(object): 
+class TaskExec(object):
  """
  Executes tasks specified by an job task database.
  """ 
@@ -128,7 +127,7 @@ class TaskExec(object):
       #
       if(self.multipleInstance):
        if(os.path.isfile(self.taskIDfileName)):
-         taskIDfile  = open(self.taskIDfileName, "rU")
+         taskIDfile  = open(self.taskIDfileName, "r")
          firstCaptureID = taskIDfile.readline()
          taskIDfile.close()
          if(firstCaptureID.strip()  != self.exec_id.strip()):
@@ -206,8 +205,8 @@ class TaskExec(object):
       startTime = time.time()
       p = subprocess.Popen(runCommand,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
       (r,e) = (p.stdout, p.stderr)
-      self.runOutput = r.read();
-      sqError        = e.read();
+      self.runOutput = r.read().decode('utf8');
+      sqError        = e.read().decode('utf8');
       if(os.path.sep == '\\') : 
         sqError = sqError.replace("\r\n",'')
       else:                     
@@ -224,7 +223,7 @@ class TaskExec(object):
         ExecOutputName = 'Task_'+ self.taskIDout  + '.output'
       fileOutput     = self.runOutput.replace("\r\n","\n")
       outf = open( ExecOutputName, "wb+")
-      outf.write(fileOutput)
+      outf.write(bytes(fileOutput,encoding='utf8'))
       outf.close()
        
       if(not self.silentRun): 
@@ -387,7 +386,7 @@ class TaskExec(object):
      else: 
        self.ssh_run = None
 
- def setOptions(options):
+ def setOptions(self, options):
    if(not('run_database' in options)): 
      print('Run database file name must be specified')
      print('Specify using --database filename or -d filename ')
@@ -460,7 +459,7 @@ class TaskExec(object):
       from Classfetch import _get_func,_get_class    #class loader 
    except ImportError as exception:
       print('Failed to load required modules sqLite and Classfetch ') 
-      print(exception.message)
+      print(exception)
       exit()
       
    # initialize class instances
@@ -560,7 +559,7 @@ class TaskExec(object):
    dataFile     = sqDB.fetchall()[0][0]
    sqDB.close()
    sqCon.close()
-   self.runTemplate = Template(dataFile)
+   self.runTemplate = Template(dataFile.decode('utf8'))
    #
    # Treatment of the output handler:
    #
@@ -593,11 +592,11 @@ class TaskExec(object):
        return
      except ImportError as exception:
        print('Failed to load output handler specified by ' + outputHandlerScript)
-       print(exception.message)
+       print(exception)
        exit()
      except AttributeError as exception:
        print('Failed to load output handler specified by ' + outputHandlerScript)
-       print(exception.message)
+       print(exception)
        exit()
       
    #
@@ -614,21 +613,25 @@ class TaskExec(object):
    sqDB.close()
    sqCon.close()
    
-   outputHandlerDataFile = StringIO.StringIO(buffer(dataFileTmp))
+   # Pythone2.7 -> Python3 mod
+   #outputHandlerDataFile = StringIO.StringIO(buffer(dataFileTmp))
+   outputHandlerDataFile = StringIO(dataFileTmp)
    #
    # Create and add the output data handler as a module.
    # The source code is stored as a string in the database. 
    #
    try:
      dataFile = outputHandlerDataFile.read().replace('\r', '')
-     module = new.module(str(outputHandlerName))
-     exec dataFile in module.__dict__
-     sys.modules[str(outputHandlerName)] = module
-     self.outputHandler = getattr(module,str(outputHandlerName))
+     # Pythone2.7 -> Python3 mod
+     #new.module(str(outputHandlerName))
+     module = ModuleType(bytes(outputHandlerName))
+     exec (dataFile in module.__dict__)
+     sys.modules[bytes(outputHandlerName)] = module
+     self.outputHandler = getattr(module,bytes(outputHandlerName))
      self.outputHandlerFlag = True
    except AttributeError as exception:
      print('Failed to load class  ' + outputHandlerName)
-     print(exception.message)
+     print(exception)
      exit()
 
      
@@ -638,14 +641,14 @@ class TaskExec(object):
   #
   substituteData = {}
   for i in range(len(self.paramKeys)):
-    substituteData[self.paramKeys[i]] = self.substituteVal(self.runData[self.paramKeys[i]],self.runDataType[self.paramKeys[i]])
+    substituteData[self.paramKeys[i]] = (self.substituteVal(self.runData[self.paramKeys[i]],self.runDataType[self.paramKeys[i]]))
   self.runDataFile =  self.runTemplate.substitute(substituteData)
   #self.runDataFile =  self.runTemplate.substitute(self.runData)
   #self.runFileName =  self.runTableName + '_' + self.taskID + '.qdt'
   self.runFileName  = self.jobData['runFileName']
   fName       =  self.workDirName + os.path.sep + self.runFileName
   
-  self.writeToUnixFile(self.runDataFile, fName)
+  self.writeToUnixFile(bytes(self.runDataFile, encoding='utf8'), fName)
   
   #
   # create job data support input files 
@@ -657,7 +660,9 @@ class TaskExec(object):
     and (i != 'runFileTemplate') \
     and (i != 'xmlTaskFile')):
       fName = self.workDirName + os.path.sep + os.path.basename(self.jobData[i + '_name'])
-      fileHandle   = StringIO.StringIO(buffer(self.jobData[i + '_data']))
+      #python2.7 -> python3
+      #fileHandle   = StringIO.StringIO(buffer(self.jobData[i + '_data']))
+      fileHandle   = StringIO(self.jobData[i + '_data'])
       dataFileTmp  = fileHandle.read() 
       fileHandle.close()
       self.writeToUnixFile(dataFileTmp , fName)
@@ -666,43 +671,43 @@ class TaskExec(object):
    self.taskIDfileName =  self.workDirName + os.path.sep + '.taskID' 
    if (os.sys.platform == 'win32'):
      f = open(self.taskIDfileName, "ab")
-     f.write(self.exec_id + "\n")
+     f.write(bytes(self.exec_id + "\n", encoding='utf8'))
      f.close()    
    else:
      f = open(self.taskIDfileName, "ab")
-     f.write(self.exec_id +"\n")
+     f.write(bytes(self.exec_id +"\n", encoding='utf8'))
      f.close()   
      
  def writeExecIDtoDoneIDfile(self):
    self.doneIDfileName  = os.path.abspath(self.alternateOutputDirectory) + os.path.sep + '.doneID'
    if (os.sys.platform == 'win32'):
      f = open(self.doneIDfileName, "ab")
-     f.write(self.exec_id + "\n")
+     f.write(bytes(self.exec_id + "\n", encoding='utf8'))
      f.close()    
    else:
      f = open(self.doneIDfileName, "ab")
-     f.write(self.exec_id +"\n")
+     f.write(bytes(self.exec_id +"\n",encoding='utf8'))
      f.close()  
      
  def writeToExecRunFile(self):
   if (os.sys.platform == 'win32'):
     f = open(self.execRunfileName, "ab")
-    f.write(str(self.taskID) + ':' + self.exec_id + "\n")
+    f.write(bytes(self.taskID + ':' + self.exec_id + "\n",encoding='utf8'))
     f.close()    
   else:
     f = open(self.execRunfileName, "ab")
-    f.write(str(self.taskID) + ':' + self.exec_id +"\n")
+    f.write(bytes(self.taskID + ':' + self.exec_id +"\n",encoding='utf8'))
   
     f.close() 
  
  def writeToExecDoneFile(self):
   if (os.sys.platform == 'win32'):
     f = open(self.execDonefileName, "ab")
-    f.write(str(self.taskID) + ':' + self.exec_id + "\n")
+    f.write(bytes(self.taskID + ':' + self.exec_id + "\n",encoding='utf8'))
     f.close()    
   else:
     f = open(self.execDonefileName, "ab")
-    f.write(str(self.taskID) + ':' + self.exec_id +"\n")
+    f.write(bytes(self.taskID + ':' + self.exec_id +"\n",encoding='utf8'))
     f.close()     
 
       
@@ -820,7 +825,7 @@ class TaskExec(object):
     self.writeExecIDtoDoneIDfile()
   
   if(self.multipleInstance):
-    taskIDfile     = open(self.doneIDfileName, "rU")
+    taskIDfile     = open(self.doneIDfileName, "r")
     firstCaptureID = taskIDfile.readline()
     taskIDfile.close()
     if(firstCaptureID.strip() != self.exec_id.strip()):
@@ -943,7 +948,7 @@ class TaskExec(object):
 #      
  def createFileLinesArray(self,fileName):
   try :
-    f = open(fileName,'rU')
+    f = open(fileName,'r')
   except IOError as exception:
     print('   === Error ===')
     print(" Data file cannot be read") 
@@ -1005,15 +1010,15 @@ class TaskExec(object):
      
  def getSQLiteType(self,val):
      if(type(val) is int    ): return 'INTEGER'
+     if(type(val) is bytes  ): return 'TEXT' 
      if(type(val) is str    ): return 'TEXT' 
-     if(type(val) is unicode): return 'TEXT' 
      if(type(val) is float  ): return 'REAL'
      return 'BLOB'
    
  def getSQLiteValue(self,val):
      if(type(val) is int    ): return '%d'      % val
+     if(type(val) is bytes  ): return  "\'" + val + "\'" 
      if(type(val) is str    ): return  "\'" + val + "\'" 
-     if(type(val) is unicode): return  "\'" + val + "\'" 
      if(type(val) is float  ): return '%-.16e'  % val
      return val
    
@@ -1022,7 +1027,7 @@ class TaskExec(object):
       from classfetch import _get_func,_get_class    #class loader 
     except ImportError as exception:
       print('Failed to load required modules classfetch ') 
-      print(exception.message)
+      print(exception)
       exit()
     
     os.sys.path.append(os.path.dirname(sshSubmitClassName))
@@ -1033,11 +1038,11 @@ class TaskExec(object):
       return sshSubmitClass
     except ImportError as exception:
       print('Failed to load class ' + sshClassName)
-      print(exception.message)
+      print(exception)
       exit()
     except AttributeError as exception:
       print('Failed to load class ' + sshClassName)
-      print(exception.message)
+      print(exception)
       exit()
 #
 # Stub for invoking the main() routine in this file 

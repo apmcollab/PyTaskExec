@@ -1,10 +1,6 @@
-from __future__ import print_function
 import threading
 import datetime
-try:
-    import Queue
-except ImportError:
-    import queue
+import queue
 import time
 import os
 

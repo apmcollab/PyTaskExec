@@ -1,4 +1,3 @@
-from __future__ import print_function
 #
 # This is a default output handler 
 #
@@ -88,7 +87,7 @@ class DefaultOutputHandler:
   def finalize(self,handlerArgs):
       return
          
-  def printData(self):
+  def printData(self,outputData):
     for i in outputData.keys():
         if(i in self.outputDataAsString):
             print(self.outputDataAsString[i])
