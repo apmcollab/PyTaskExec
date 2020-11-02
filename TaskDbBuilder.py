@@ -231,8 +231,8 @@ class TaskDbBuilder(object):
   #    print the tasks and the parameters that are varying 
   #
       s = '%3d' % taskIndex
-      print(s, end=' ')  
-      for k in paramList.keys(): print(' ',k,' ',self.runParameters[k], end=' ') 
+      print(s, end = ' ')  
+      for k in paramList.keys(): print(' ',k,' ',self.runParameters[k], end = ' ') 
       print(' ')
 
 #

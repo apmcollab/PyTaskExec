@@ -23,6 +23,9 @@ from copy import deepcopy
 #
 #############################################################################
 
+TRUE_VALS  = ( '1', 'true',  'True', 'TRUE')
+FALSE_VALS = ( '0', 'false', 'False', 'FALSE')
+
 class parseTaskXML(object):
   """
   This class contains methods to perform operations associated on
@@ -51,6 +54,10 @@ class parseTaskXML(object):
         s = ''.join(s.split('E'))
         if s.isdigit() : 
           return float(val)
+        if(val.strip() in TRUE_VALS): 
+            return True
+        if(val.strip() in FALSE_VALS): 
+            return False
         else: 
           return val.strip()
       else:
@@ -64,6 +71,11 @@ class parseTaskXML(object):
           return float(val)
         elif(valType =='string'):
           return val.strip()
+        elif(valType =='bool'):
+          if(val.strip() in TRUE_VALS): 
+            return True
+          if(val.strip() in FALSE_VALS): 
+            return False
     else:
       if(valType =='int'):
         return int(0)
@@ -75,6 +87,8 @@ class parseTaskXML(object):
         return float(0.0)
       elif(valType =='string'):
         return ''
+      elif(valType =='bool'):
+        return False
 
   def hasChildNode(self,element,childName):
     """

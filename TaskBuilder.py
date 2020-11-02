@@ -24,6 +24,9 @@ import random
 #
 #############################################################################
 
+TRUE_VALS  = ( '1', 'true',  'True', 'TRUE')
+FALSE_VALS = ( '0', 'false', 'False', 'FALSE')
+
 
 from Classfetch import _get_func,_get_class
 from io import StringIO
@@ -186,7 +189,7 @@ class TaskBuilder:
     jobData['runParameterNames']  = paramKeyString;
     jobData['outputDataNames']    = outputKeyString;
     jobData['jobDataNames']       = ' ';
-    jobData['taskDataNames']       = taskKeyString;
+    jobData['taskDataNames']      = taskKeyString;
     
     self.jobKeys = list(jobData.keys())
     jobKeyString = self.jobKeys[0]
@@ -346,13 +349,33 @@ class TaskBuilder:
       
         
   def insertVal(self,val,valType):
-     if(valType == 'TEXT'):    return  "\'" + val.strip() + "\'"
+     if(valType == 'TEXT') : return  "\'" + val.strip() + "\'"
+     if(valType == 'BOOL') : 
+       if((type(val) is bool) and (val == True)) : return "\'true\'"
+       if((type(val) is bool) and (val == False)): return "\'false\'"
+       if((type(val) is int) and (val == 1)) : return "\'true\'"
+       if((type(val) is int) and (val == 0)): return "\'false\'"
+       if(val.strip() in TRUE_VALS): 
+            return "\'true\'"
+       if(val.strip() in FALSE_VALS): 
+            return "\'false\'"
+     if((valType == 'INTEGER') and (not (type(val) is int))):
+      print('                 === Error ===')
+      print('Parameter type ambiguity \n')
+      print('Use explicit type specification.\n')
+      print('Auto detected type : ', end = ' ') 
+      print(valType)
+      print('Actual type        : ',end = ' ')
+      print(type(val))
+      exit()
+      
      if(valType == 'INTEGER'): return '%d'      % val
      if(valType == 'REAL'):    return '%-.16e'  % val
      if(valType == 'BLOB'):    return val
      
   def getSQLiteType(self,val):
-     if(type(val) is int      ): return 'INTEGER'
+     if(type(val) is int  ): return 'INTEGER'
+     if(type(val) is bool ): return 'BOOL'
      if(type(val) is str  ): return 'TEXT' 
      try:
        if(type(val) is unicode ): return 'TEXT' 
@@ -363,6 +386,8 @@ class TaskBuilder:
    
   def getSQLiteValue(self,val):
      if(type(val) is int    ): return '%d'      % val
+     if((type(val) is bool) and (val == True)) : return "\'true\'"
+     if((type(val) is bool) and (val == False)): return "\'false\'"
      if(type(val) is str    ): return  "\'" + val.strip() + "\'" 
      try: 
        if(type(val) is unicode   ): return  "\'" + val.strip() + "\'" 
