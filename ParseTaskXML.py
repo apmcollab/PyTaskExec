@@ -23,8 +23,6 @@ from copy import deepcopy
 #
 #############################################################################
 
-TRUE_VALS  = ( '1', 'true',  'True', 'TRUE')
-FALSE_VALS = ( '0', 'false', 'False', 'FALSE')
 
 class parseTaskXML(object):
   """
@@ -36,11 +34,23 @@ class parseTaskXML(object):
   def __init__(self):
     self.taskList = []
     
+    
+  def checkInt(self,s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+      
   def getTypedValue(self,val='',valType=''):
     """
     This code returns a typed value associated with a unicode input
     string. The type is either explicitly specified, or determined by
     examining the string. 
+    
+    An input parameter value specified as bool is either treated as an int
+    if the value specified is an int or as a string if the input value is a string. 
+    
     """ 
     if(val != ''):
       if(valType  == ''):
@@ -54,10 +64,6 @@ class parseTaskXML(object):
         s = ''.join(s.split('E'))
         if s.isdigit() : 
           return float(val)
-        if(val.strip() in TRUE_VALS): 
-            return True
-        if(val.strip() in FALSE_VALS): 
-            return False
         else: 
           return val.strip()
       else:
@@ -72,10 +78,8 @@ class parseTaskXML(object):
         elif(valType =='string'):
           return val.strip()
         elif(valType =='bool'):
-          if(val.strip() in TRUE_VALS): 
-            return True
-          if(val.strip() in FALSE_VALS): 
-            return False
+          if(self.checkInt(val)): return int(val)
+          return val.strip()
     else:
       if(valType =='int'):
         return int(0)
@@ -88,7 +92,7 @@ class parseTaskXML(object):
       elif(valType =='string'):
         return ''
       elif(valType =='bool'):
-        return False
+        return ''
 
   def hasChildNode(self,element,childName):
     """

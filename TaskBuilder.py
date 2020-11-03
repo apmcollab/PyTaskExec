@@ -215,6 +215,7 @@ class TaskBuilder:
     
     self.outputType = {}
     for i in range(len(self.outputKeys)):
+        print(outputData[self.outputKeys[i]])
         self.outputType[self.outputKeys[i]] = self.getSQLiteType(outputData[self.outputKeys[i]]);
      
     #
@@ -349,17 +350,10 @@ class TaskBuilder:
       
         
   def insertVal(self,val,valType):
-     if(valType == 'TEXT') : return  "\'" + val.strip() + "\'"
-     if(valType == 'BOOL') : 
-       if((type(val) is bool) and (val == True)) : return "\'true\'"
-       if((type(val) is bool) and (val == False)): return "\'false\'"
-       if((type(val) is int) and (val == 1)) : return "\'true\'"
-       if((type(val) is int) and (val == 0)): return "\'false\'"
-       if(val.strip() in TRUE_VALS): 
-            return "\'true\'"
-       if(val.strip() in FALSE_VALS): 
-            return "\'false\'"
-     if((valType == 'INTEGER') and (not (type(val) is int))):
+    
+    if(  ((valType == 'INTEGER') and (not (type(val) is int)))
+      or ((valType == 'REAL')    and (not (type(val) is float)))
+      or ((valType == 'TEXT')    and (not (type(val) is str)))):
       print('                 === Error ===')
       print('Parameter type ambiguity \n')
       print('Use explicit type specification.\n')
@@ -368,11 +362,25 @@ class TaskBuilder:
       print('Actual type        : ',end = ' ')
       print(type(val))
       exit()
+    if(valType == 'TEXT') : return  "\'" + val.strip() + "\'"
+    if(valType == 'BOOL') : 
+      if((type(val) is bool) and (val == True)) : return "\'true\'"
+      if((type(val) is bool) and (val == False)): return "\'false\'"
+      if((type(val) is int) and (val == 1)) : return "\'1\'"
+      if((type(val) is int) and (val == 0)) : return "\'0\'"
+      return val.strip()
+      #
+      #if(val.strip() in TRUE_VALS): 
+      #  return "\'true\'"
+      #if(val.strip() in FALSE_VALS): 
+      # return "\'false\'"
+
       
-     if(valType == 'INTEGER'): return '%d'      % val
-     if(valType == 'REAL'):    return '%-.16e'  % val
-     if(valType == 'BLOB'):    return val
-     
+    if(valType == 'INTEGER'): return '%d'      % val
+    if(valType == 'REAL'):    return '%-.16e'  % val
+    if(valType == 'BLOB'):    return val
+   
+  
   def getSQLiteType(self,val):
      if(type(val) is int  ): return 'INTEGER'
      if(type(val) is bool ): return 'BOOL'
@@ -385,7 +393,7 @@ class TaskBuilder:
      return 'BLOB'
    
   def getSQLiteValue(self,val):
-     if(type(val) is int    ): return '%d'      % val
+     if( type(val) is int): return '%d'      % val
      if((type(val) is bool) and (val == True)) : return "\'true\'"
      if((type(val) is bool) and (val == False)): return "\'false\'"
      if(type(val) is str    ): return  "\'" + val.strip() + "\'" 

@@ -79,7 +79,14 @@ class DefaultOutputHandler:
         self.message = message
     def __repr__(self):
         return repr(self.message)
-    
+   
+  def checkInt(self,s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+       
   def fillOutputData(self,outputLines,taskData,jobData,parameterData,outputData):
     for i in outputData.keys():
         self.packData(outputData,i) 
@@ -105,8 +112,11 @@ class DefaultOutputHandler:
             outputData[key] =  self.outputDataAsString[key] 
             return
         if((dataType == u'bool')or(dataType == u'BOOL')):
-            outputData[key] =  self.outputDataAsString[key] 
+          if(self.checkInt(self.outputDataAsString[key])):
+            outputData[key] = int(self.outputDataAsString[key])
             return
+          outputData[key] =  self.outputDataAsString[key] 
+          return
             
 #NULL.    The value is a NULL value.
 #INTEGER. The value is a signed integer, stored in 1, 2, 3, 4, 6, or 8 bytes depending on the magnitude of the value.
