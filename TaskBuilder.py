@@ -215,7 +215,6 @@ class TaskBuilder:
     
     self.outputType = {}
     for i in range(len(self.outputKeys)):
-        print(outputData[self.outputKeys[i]])
         self.outputType[self.outputKeys[i]] = self.getSQLiteType(outputData[self.outputKeys[i]]);
      
     #

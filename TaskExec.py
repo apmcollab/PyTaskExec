@@ -536,15 +536,12 @@ class TaskExec(object):
 
  
  def writeToUnixFile(self,fileContents,fileName):
-   if os.sys.platform == 'win32':
-     outputFile = fileContents.replace("\r\n", "\n")
-     f = open(fileName, "wb+")
-     f.write(outputFile)
-     f.close()    
-   else:
-     f = open(fileName, "wb+")
-     f.write(fileContents)
-     f.close()     
+    f = open(fileName, "wb+")
+    if(type(fileContents) is bytes ):
+      f.write(fileContents)
+    else:
+      f.write(fileContents.encode())
+    f.close()     
      
  def importTemplateFileAndOutputHandler(self):
    #
@@ -662,7 +659,8 @@ class TaskExec(object):
       fName = self.workDirName + os.path.sep + os.path.basename(self.jobData[i + '_name'])
       #python2.7 -> python3
       #fileHandle   = StringIO.StringIO(buffer(self.jobData[i + '_data']))
-      fileHandle   = StringIO(self.jobData[i + '_data'])
+      print(self.jobData[i + '_data'])
+      fileHandle   = StringIO(self.jobData[i + '_data'].decode('utf-8'))
       dataFileTmp  = fileHandle.read() 
       fileHandle.close()
       self.writeToUnixFile(dataFileTmp , fName)

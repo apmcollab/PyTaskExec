@@ -3,6 +3,7 @@ import subprocess
 import time
 import datetime
 import optparse
+from shutil import copyfile
 
 import sqlite3
 import xml.dom.minidom
@@ -237,27 +238,26 @@ class TaskDbBuilder(object):
       print(s, end = ' ')  
       for k in paramList.keys(): print(' ',k,' ',self.runParameters[k], end = ' ') 
       print(' ')
+      
+      
+#
+#   Close down the database
+#
+    sqDB.close()
+    sqCon.close()
 
-  #
-  # Select task 0 for testing 
-  #
-    self.runParameters = parseTask.taskList[0]
+  #####################################################################
+  #           Creating and populaing a TaskTest directory
+  ######################################################################
   
-  #print(self.runParameters)
-    
-  #print(" ")
-  #print(self.jobData['executableCommand']) 
-  #print(self.jobData['runFileName'])
-  #print(self.jobData['runFileTemplate_name'])
-  #print(self.jobData['dataFileForRun_name'])
-  #print(" ")
-  #print(" ")
-    
-  #print(self.jobData)
-    
+  # Default, use the first task to construct the sample file 
+  
+    self.runParameters = parseTask.taskList[0]
+
     runFileName         = self.jobData['runFileName']
     runFileTemplateName = self.jobData['runFileTemplate_name']
     
+  # Use the template and the task parameters to create the input file 
     try :
       f = open(runFileTemplateName,'r')
     except IOError as exception:
@@ -305,12 +305,23 @@ class TaskDbBuilder(object):
     #
     # Copy over any specified data files 
     #
+    
+    fileNameList = {}
+    for dataVal in jobDataElement.childNodes:
+      if(dataVal.nodeType is xml.dom.Node.ELEMENT_NODE):
+        if(dataVal.getAttribute('type').lower() == 'file'):
+          if(dataVal.nodeName != 'runFileTemplate') :
+            fileNameList[dataVal.nodeName] = dataVal.getAttribute('value')
+    for i in fileNameList.keys():
+      testFile = self.testDir + os.path.sep + fileNameList[i]
+      try :
+        copyfile(fileNameList[i],testFile)
+      except IOError as exception:
+        print('                 === Error ===')
+        print("File specified for copying to task directory cannot be found") 
+        print(exception)
+        exit()
 
-#
-#   Close down the database
-#
-    sqDB.close()
-    sqCon.close()
     
     return 0
 #
