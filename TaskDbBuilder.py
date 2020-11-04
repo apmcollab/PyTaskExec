@@ -11,6 +11,8 @@ from TaskBuilder import checkForExistingDatabase
 from TaskBuilder import testRunDataFile
 from ParseTaskXML import parseTaskXML
 
+from   string import Template
+
 #
 # This routine creates the database for a parametric run
 # 
@@ -42,6 +44,7 @@ class TaskDbBuilder(object):
     self.standardInputs['xmlTaskFile']   =  None
     self.standardInputs['includePaths']  =  None
     self.standardOptions['includePaths']  = None
+    self.testDir                         = 'TaskTest'
     self.taskData = {}
 
   def parseStandardInputs(self):
@@ -235,11 +238,80 @@ class TaskDbBuilder(object):
       for k in paramList.keys(): print(' ',k,' ',self.runParameters[k], end = ' ') 
       print(' ')
 
+  #
+  # Select task 0 for testing 
+  #
+    self.runParameters = parseTask.taskList[0]
+  
+  #print(self.runParameters)
+    
+  #print(" ")
+  #print(self.jobData['executableCommand']) 
+  #print(self.jobData['runFileName'])
+  #print(self.jobData['runFileTemplate_name'])
+  #print(self.jobData['dataFileForRun_name'])
+  #print(" ")
+  #print(" ")
+    
+  #print(self.jobData)
+    
+    runFileName         = self.jobData['runFileName']
+    runFileTemplateName = self.jobData['runFileTemplate_name']
+    
+    try :
+      f = open(runFileTemplateName,'r')
+    except IOError as exception:
+      print('                 === Error ===')
+      print(" RunFileTemplate file cannot be read") 
+      print(exception)
+      exit()
+    
+    templateFile = f.read()
+    runTemplate = Template(templateFile)
+    
+    runDataFileLines   =  runTemplate.substitute(self.runParameters)
+    fName              =  self.testDir + os.path.sep + runFileName
+    
+    if (not (os.path.isdir(self.testDir))) : os.mkdir(self.testDir)
+    
+    try :
+      fout = open(fName,'w')
+    except IOError as exception:
+      print('                 === Error ===')
+      print(" RunFile file cannot be written") 
+      print(exception)
+      exit()
+      
+    fout.write(runDataFileLines)
+    fout.close()
+    
+    # Create a shell script to launch executable in TaskTest 
+    # (same as command that the ExecRun executes)
+    
+    shellScriptLines = self.jobData['executableCommand']
+    shellScriptFileName = self.testDir + os.path.sep + 'runTest.sh'
+    
+    try :
+      fout = open(shellScriptFileName,'w')
+    except IOError as exception:
+      print('                 === Error ===')
+      print(" runTest.sh file cannot be written") 
+      print(exception)
+      exit()
+      
+    fout.write(shellScriptLines)
+    fout.close()
+    
+    #
+    # Copy over any specified data files 
+    #
+
 #
 #   Close down the database
 #
     sqDB.close()
     sqCon.close()
+    
     return 0
 #
 #
