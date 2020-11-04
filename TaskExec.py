@@ -659,7 +659,6 @@ class TaskExec(object):
       fName = self.workDirName + os.path.sep + os.path.basename(self.jobData[i + '_name'])
       #python2.7 -> python3
       #fileHandle   = StringIO.StringIO(buffer(self.jobData[i + '_data']))
-      print(self.jobData[i + '_data'])
       fileHandle   = StringIO(self.jobData[i + '_data'].decode('utf-8'))
       dataFileTmp  = fileHandle.read() 
       fileHandle.close()
