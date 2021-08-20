@@ -300,30 +300,24 @@ class CaptureOutput(object):
     def parseOptions(self):
         p = optparse.OptionParser()
         p.add_option('--database','-d',action='store',dest='run_database',\
-                                       help='Specifies job task database file (required)')
+                                       help='(required) Specifies job task database file')
         
         p.add_option('--xmltaskfile','-x',action='store',dest='xml_taskfile',\
-                                        help='XML file containing a specification of the output data to be collected (output data specified as in the input file used for TaskDbBuilder)')
+                                        help='(required) XML file containing a specification of the output data to be collected. Output data specified as in the input file used for TaskDbBuilder)')
         
         p.add_option('--output','-o',action='store',dest='output_directory',\
-                                       help='Output directory created by ExecRun for task results ')
+                                       help='(required) Output directory created by ExecRun for task results ')
   
         p.add_option('--tasktable','-t',action='store',dest='task_table',\
-                 help='Specifies task database table name (if not specified, default is used)')
+                 help='(optional) Specifies task database table name (if not specified, default is used)')
                  
         p.add_option('--alternateTaskPrefix','-a',action='store',type='string',\
-                             dest='prefix_Task_ID', help='Specifies an alternate prefix to the task output file name. Default name is Task, resulting in output file names of the form Task_XXX.output.') 
+                             dest='prefix_Task_ID', help='(optional) Specifies an alternate prefix to the task output file name. Default name is Task, resulting in output file names of the form Task_XXX.output.') 
 
         
         options,arguments = p.parse_args()
         
-        if(not(options.xml_taskfile)):
-            print('CaptureOutputs Error:')
-            print('XML tasks file must be specified')
-            print('use -x or --xmltaskfile options to specify')
-            exit()
-        else:
-            self.xmlFile = options.xml_taskfile
+
         
         if(not(options.run_database)): 
             print('Run database file name must be specified')
@@ -331,6 +325,14 @@ class CaptureOutput(object):
             exit()
         else:
             self.jobDBname = options.run_database
+            
+        if(not(options.xml_taskfile)):
+            print('CaptureOutputs Error:')
+            print('XML tasks file must be specified')
+            print('use -x or --xmltaskfile options to specify')
+            exit()
+        else:
+            self.xmlFile = options.xml_taskfile
          
         if(options.task_table): 
             self.runTableName  = options.task_table
