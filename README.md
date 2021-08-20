@@ -8,9 +8,9 @@ Python scripts to:
 ### Prerequisites
 python3 (Not backward compatible with Python 2.7)
 ### Versioning
-Release : 1.0.2
+Release : 1.0.3
 ### Date 
-Oct. 20, 2020 
+Aug. 20, 2021 
 ### Authors
 Chris Anderson
 ### License
