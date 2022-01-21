@@ -7,7 +7,22 @@ from socket import gethostname
 from shutil import copy
 from SqUtilities import SqUtilities
 #
-# This program creates the set of data files associated with 
+# This program creates the set of data files associated all the
+# tasks specified in the data base created using TaskDbBuilder. 
+#
+# Files required to run ExecRun are NOT created, and so the 
+# presumpation is another method of executing the program 
+# in each of the data file directories is being used. 
+#
+# The invocation of this program is identical to that for 
+# ExecRun, i.e. 
+#
+# python3 [Path to PyTaskExec]/CreateTaskDataFiles.py -d [TaskDataBase] -t [TaskTable] -o [Output directory]
+#
+# If the output directory parameter is not specified, then the directory containing
+# all the task directories is named "TaskData"
+#
+# The input task database is not altered. 
 #   
 #
 #############################################################################
@@ -248,7 +263,9 @@ class CreateTaskDataFiles(object):
         fileHandle   = StringIO(self.jobData[i + '_data'].decode('utf-8'))
         dataFileTmp  = fileHandle.read() 
         fileHandle.close()
-        self.writeToUnixFile(dataFileTmp , fName)    
+        print('Creating files  : ' + fName )
+        self.writeToUnixFile(dataFileTmp , fName)   
+    print() 
   
   
   def createRunWorkingDirectory(self):
