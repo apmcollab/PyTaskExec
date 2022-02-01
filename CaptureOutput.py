@@ -6,6 +6,7 @@ import random
 import time
 import xml.dom.minidom
 import sqlite3
+import os.path
 from ParseTaskXML import parseTaskXML
 #
 #############################################################################
@@ -85,9 +86,11 @@ class CaptureOutput(object):
         for task in range(1,self.taskMax+1):
             self.taskID = '%d' % task
             self.captureTaskData()
-            if(self.taskData['status'] != 'done'):
-                continue
+            #if(self.taskData['status'] != 'done'):
+            #    continue
             self.getRunWorkingDirectory()
+            if(self.workDirName == None):
+                continue
             os.chdir(self.workDirName)
             
             if(self.prefix_Task_ID != None):
@@ -96,6 +99,10 @@ class CaptureOutput(object):
                 ExecOutputName = 'Task_'+ self.taskIDout  + '.output'
             
             if(self.prefix_Task_ID != "none"):
+                if(not (os.path.exists(ExecOutputName))):
+                     print('Warning: Task Output File '+ ExecOutputName + ' Doesn\'t Exist')
+                     os.chdir(self.localDirectory)
+                     continue
                 f  = open(ExecOutputName, 'r')
                 self.runOutput =  f.read()
                 self.runOutput = self.runOutput.replace("\r\n","\n")
@@ -227,17 +234,28 @@ class CaptureOutput(object):
             +'\' Doesn\'t Exist')
             exit()
 
+        # Try indexing suffix 001, 002, 003, ... 999 
+        
         self.taskIDout = self.taskID
         if   (int(self.taskID) <= 9) : self.taskIDout = '00' + self.taskID
         elif (int(self.taskID) <= 99) : self.taskIDout = '0'  + self.taskID
-        else                                                         : self.taskIDout = self.taskID
+        else : self.taskIDout = self.taskID
   
         self.workDirName =  self.alternateOutputDirectory + os.path.sep + self.runTableName \
         + '_' + self.taskIDout
+        
+        if (os.path.isdir(self.workDirName)) : 
+            return
+            
+        # Try indexing suffix 1,2,3 ...
+        
+        self.taskIDout = self.taskID
+        self.workDirName =  self.alternateOutputDirectory + os.path.sep + self.runTableName \
+        + '_' + self.taskIDout    
+        
         if (not (os.path.isdir(self.workDirName))) : 
-            print('Error: Job Output Directory \''+ self.workDirName \
-            +'\' Doesn\'t Exist')
-            exit()
+            print('Warning: Task Output Directory for Task '+ self.taskID + ' Doesn\'t Exist')
+            self.workDirName = None
         
     def captureTaskData(self):
         #

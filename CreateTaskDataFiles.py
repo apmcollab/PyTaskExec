@@ -273,9 +273,9 @@ class CreateTaskDataFiles(object):
     # Write out the data file to the run directory 
     #
     self.taskIDout = self.taskID
-    if   (int(self.taskID) <= 9)  : self.taskIDout = '00' + self.taskID
-    elif (int(self.taskID) <= 99) : self.taskIDout = '0'  + self.taskID
-    else                          : self.taskIDout = self.taskID
+    #if   (int(self.taskID) <= 9)  : self.taskIDout = '00' + self.taskID
+    #elif (int(self.taskID) <= 99) : self.taskIDout = '0'  + self.taskID
+    #else                          : self.taskIDout = self.taskID
   
     if (not (os.path.isdir(self.outputDirectory))) : os.mkdir(self.outputDirectory)
         
