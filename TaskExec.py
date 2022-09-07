@@ -977,9 +977,9 @@ class TaskExec(object):
        errFlag = False
      except sqlite3.OperationalError as e:
        tryCount = tryCount +1
-       if(e[0].find("no such table") != -1):
-         print(e)
-         exit()
+       #if(e[0].find("no such table") != -1):
+       #  print(e)
+       #  exit()
        print(e)
        print("Database locked. Retrying ...")
        sleepTime = conflictTimeFactor*random.random()
