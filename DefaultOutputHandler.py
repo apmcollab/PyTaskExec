@@ -70,9 +70,14 @@ class DefaultOutputHandler:
             comparisonLine =comparisonLine.replace(')','')
             if(comparisonLine.find(dataName) != -1):
                s = outputLines[i].split(':')
-               if(s[0].strip() == dataName.strip()):
+               stmp = s[0][:]
+               if(any(ele == dataName.strip() for ele in stmp.split())):
                  s = s[1].split()
-                 self.outputDataAsString[dataName] = s[0].strip();    
+                 self.outputDataAsString[dataName] = s[0].strip();
+               		  
+               #if(s[0].strip() == dataName.strip()):
+               # s = s[1].split()
+               # self.outputDataAsString[dataName] = s[0].strip();    
         
   class handlerError(Exception):
     def __init__(self, message=None):

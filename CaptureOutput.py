@@ -7,6 +7,7 @@ import time
 import xml.dom.minidom
 import sqlite3
 import os.path
+import re
 from ParseTaskXML import parseTaskXML
 #
 #############################################################################
@@ -144,10 +145,16 @@ class CaptureOutput(object):
                 comparisonLine =comparisonLine.replace('(','')
                 comparisonLine =comparisonLine.replace(')','')
                 if(comparisonLine.find(dataName) != -1):
-                    s = self.outputLines[i].split(':')
-                    if(s[0].strip() == dataName.strip()):
-                        s = s[1].split()
-                        self.outputDataAsString[dataName] = s[0].strip();
+               		s =self.outputLines[i].split(':')
+               		stmp = s[0][:]
+               		if(any(ele == dataName.strip() for ele in stmp.split())):
+               		  s = s[1].split()
+               		  self.outputDataAsString[dataName] = s[0].strip();
+               		  print(dataName,self.outputDataAsString[dataName])
+                    #s = self.outputLines[i].split(':')
+                    #if(s[0].strip() == dataName.strip()):
+                    #    s = s[1].split()
+                    #    self.outputDataAsString[dataName] = s[0].strip();
          
         # pack the data output values into outputData forcing type information
                       
