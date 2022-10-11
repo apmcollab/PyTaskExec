@@ -150,7 +150,6 @@ class CaptureOutput(object):
                		if(any(ele == dataName.strip() for ele in stmp.split())):
                		  s = s[1].split()
                		  self.outputDataAsString[dataName] = s[0].strip();
-               		  print(dataName,self.outputDataAsString[dataName])
                     #s = self.outputLines[i].split(':')
                     #if(s[0].strip() == dataName.strip()):
                     #    s = s[1].split()
