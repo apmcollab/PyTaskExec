@@ -9,6 +9,7 @@ import sqlite3
 import os.path
 import re
 from ParseTaskXML import parseTaskXML
+from dns.rdataclass import NONE
 #
 #############################################################################
 #
@@ -236,9 +237,10 @@ class CaptureOutput(object):
             
     def getRunWorkingDirectory(self):
         if (not (os.path.isdir(self.alternateOutputDirectory))): 
-            print('Error: Job Output Directory \''+ self.alternateOutputDirectory \
+            print('Warning: Job Output Directory \''+ self.alternateOutputDirectory \
             +'\' Doesn\'t Exist')
-            exit()
+            self.workDirName = None
+            return
 
         # Try indexing suffix 001, 002, 003, ... 999 
         
