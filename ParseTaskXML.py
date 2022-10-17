@@ -323,7 +323,10 @@ class parseTaskXML(object):
     if(intervals != 0):
       dP = float(pMax - pMin)/float(intervals)
       for i in range(intervals+1):
-        pVal = pMin + float(i)*dP 
+        if(type(pVal) is float):
+          pVal = round(pMin + float(i)*dP,12)
+        if(type(pVal) is int):
+          pVal = round(pMin + float(i)*dP,0)
         Values = {}
         Values[parameter]=pVal
         valuesList.append(Values)
@@ -333,7 +336,10 @@ class parseTaskXML(object):
         Values = {}
         Values[parameter]=i
         valuesList.append(Values)
-        i += increment
+        if(type(pMin) is float):
+          i = round(i + increment,12)
+        if(type(pMin) is int):
+          i = round(i + increment,0)
     return valuesList 
    
   def getValuesLoopList(self,parameter,element):
