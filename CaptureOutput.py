@@ -9,6 +9,8 @@ import sqlite3
 import os.path
 import re
 from ParseTaskXML import parseTaskXML
+from dns.rdataclass import NONE
+from traits.trait_types import false
 #
 #############################################################################
 #
@@ -101,9 +103,9 @@ class CaptureOutput(object):
             
             if(self.prefix_Task_ID != "none"):
                 if(not (os.path.exists(ExecOutputName))):
-                     print('Warning: Task Output File '+ ExecOutputName + ' Doesn\'t Exist')
-                     os.chdir(self.localDirectory)
-                     continue
+                    print('Warning: Task Output File '+ ExecOutputName + ' Doesn\'t Exist')
+                    os.chdir(self.localDirectory)
+                    continue
                 f  = open(ExecOutputName, 'r')
                 self.runOutput =  f.read()
                 self.runOutput = self.runOutput.replace("\r\n","\n")
@@ -156,7 +158,10 @@ class CaptureOutput(object):
                     #    self.outputDataAsString[dataName] = s[0].strip();
          
         # pack the data output values into outputData forcing type information
-                      
+            
+        self.outputDataKeys = self.outputData.keys()
+ 
+        
         self.outputData = {}
         for key in list(self.outputDataAsString.keys()):
             dataType = self.outputType[key]
@@ -166,21 +171,39 @@ class CaptureOutput(object):
                 self.outputData[key] = int(self.outputDataAsString[key])
             if((dataType == u'text')or(dataType == u'TEXT')):
                 self.outputData[key] =  self.outputDataAsString[key]
-         
+              
                         
     def packOutput(self): 
         sqCon  = sqlite3.connect(self.jobDBname,isolation_level = None)
         sqDB   = sqCon.cursor()
+        sqCommand = "select OutputDataNames from " + self.runTableName + "_support;"
+        self.executeDB(sqDB,sqCommand)
+        data = sqDB.fetchone() 
+        outputDataNames = data[0].split(":")
+        outputNameAdded = False
+      
  
-        for key in list(self.outputData.keys()):       
+        for key in list(self.outputData.keys()):     
             sqCommand = 'SELECT ' + key + ' from ' + self.runTableName + ' where ROWID = 1;'
             try:
-                sqDB.execute(sqCommand)
-            except sqlite3.OperationalError as e :
+                sqDB.execute(sqCommand)  
+            except sqlite3.OperationalError :
                 print("Database field not found " + key + ' : Adding ' +  key + ' ' + self.outputType[key])
                 sqCommand = 'ALTER TABLE '  + self.runTableName + ' ADD COLUMN ' +  key + ' ' + self.outputType[key] + ';'
-                sqDB.execute(sqCommand)
+                self.executeDB(sqDB,sqCommand)
+                outputDataNames.append(key)
+                outputNameAdded = True
                 
+        #
+        # Update list of output names 
+        #
+        if(outputNameAdded):
+          newOutputNames =  ":".join(outputDataNames)
+          print(newOutputNames)
+          sqCommand = 'UPDATE ' + self.runTableName +  "_support  SET OutputDataNames = \"" + newOutputNames + "\";"
+          print(sqCommand)
+          self.executeDB(sqDB,sqCommand)
+                      
 # Pack output data into the database
 
         sqCommand = 'UPDATE ' + self.runTableName + " SET status = \'done\' "
@@ -236,9 +259,10 @@ class CaptureOutput(object):
             
     def getRunWorkingDirectory(self):
         if (not (os.path.isdir(self.alternateOutputDirectory))): 
-            print('Error: Job Output Directory \''+ self.alternateOutputDirectory \
+            print('Warning: Job Output Directory \''+ self.alternateOutputDirectory \
             +'\' Doesn\'t Exist')
-            exit()
+            self.workDirName = None
+            return
 
         # Try indexing suffix 001, 002, 003, ... 999 
         
