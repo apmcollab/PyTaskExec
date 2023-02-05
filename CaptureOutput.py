@@ -9,8 +9,6 @@ import sqlite3
 import os.path
 import re
 from ParseTaskXML import parseTaskXML
-from dns.rdataclass import NONE
-from traits.trait_types import false
 #
 #############################################################################
 #
