@@ -296,9 +296,11 @@ class parseTaskXML(object):
           if(len(childElement.getAttribute('value')) == 0) :
             pMin = self.getTypedValue(childElement.childNodes[0].nodeValue,\
                             childElement.getAttribute('type'))
+            pVal = pMin;
           else:
             pMin = self.getTypedValue(childElement.getAttribute('value'),\
                             childElement.getAttribute('type'))
+            pVal = pMin;
         if(childElement.nodeName == 'max'): 
           if(len(childElement.getAttribute('value')) == 0) :
             pMax = self.getTypedValue(childElement.childNodes[0].nodeValue,\
