@@ -78,6 +78,7 @@ class TaskExec(object):
     self.totalTaskCount    = None
     self.prefix_Task_ID    = None
     self.ssh_run           = None
+    self.sequential        = False
 
 #
 #===========     Begin Main Program   ============================
@@ -299,6 +300,9 @@ class TaskExec(object):
      
      p.add_option('--silent','-s',action='store_true',\
              dest='silent', help='Suppress output of programs run by TaskExec')
+             
+     p.add_option('--sequential',action='store_true',\
+              dest='sequential', help='Use sequential execution of tasks')
 
      p.add_option('--sshRun',action='store',\
              dest='ssh_run', help='Run the command remotely using ssh on a machine determined by the sshSubmit script')
@@ -359,7 +363,10 @@ class TaskExec(object):
          
      if(options.silent):
          self.silentRun = options.silent
-         
+
+     if(options.sequential):
+         self.sequential = options.sequential
+                 
      if(options.local_cache):
          self.localCache = options.local_cache
          
@@ -432,6 +439,9 @@ class TaskExec(object):
                   
    if('silent' in options):
      self.silentRun = options['silent']
+     
+   if('sequential' in options):
+     self.sequential = options['sequential']
      
    if('local_cache' in options):
          self.localCache = options['local_cache']
@@ -529,7 +539,9 @@ class TaskExec(object):
   # then select a task that hasn't already been 
   # excluded.
   
-  random.shuffle(taskList)
+  if(not self.sequential):
+    random.shuffle(taskList)
+  	
   taskVal = taskList[0]
       
   self.taskID = '%d'% taskVal

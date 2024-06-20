@@ -55,9 +55,10 @@ class ExecRun(object):
     self.standardOptions['exec_id']       = None
     self.standardOptions['localCache']    = True
     
-    self.standardOptions['prefix_Task_ID'] = None
+    self.standardOptions['prefix_Task_ID']        = None
     self.standardOptions['multipleInstance']      = False
     self.standardOptions['fileBasedCoordination'] = True
+    self.standardOptions['sequential']            = False
     
     self.tasksToBeDone  = 0
     
@@ -191,6 +192,9 @@ class ExecRun(object):
  
      p.add_option('--silent','-s',action='store_true',\
              dest='silent', help='Suppress output of programs run by TaskExec')
+
+     p.add_option('--sequential',action='store_true',\
+              dest='sequential', help='Use sequential execution of tasks')
      
      p.add_option('--local','-l',action='store_true',\
              dest='local_cache', help='Create a local cache of the task data base file in the task directories to minimize db access conflicts. Default True.')
@@ -269,7 +273,9 @@ class ExecRun(object):
          
      if(options.file_coordination != None):
        self.standardOptions['fileBasedCoordination'] = options.file_coordination
-
+       
+     if(options.sequential != None):
+       self.standardOptions['sequential'] = options.sequential
   
   def setStandardOptions(self,options):
      if(not('run_database' in options)): 
@@ -303,7 +309,10 @@ class ExecRun(object):
          self.standardOptions['batch_submit'] = options['batch_submit']
 
      if('silent' in options):
-         self.standardOptions['silent'] = options['silent']   
+         self.standardOptions['silent'] = options['silent']  
+          
+     if('sequential' in options):
+         self.standardOptions['sequential'] = options['sequential'] 
             
      if('local_cache' in options):
          self.standardOptions['localCache'] = options['local_cache']
@@ -412,7 +421,7 @@ class ExecRun(object):
     # Create run command using the full path to the python command 
     #   
     # print( type(self.standardOptions['runTableName']))
-      runCommand = pythonCommand + ' ' + execProg  + ' -d ' + self.standardOptions['runDBname'] \
+      runCommand = pythonCommand + ' ' + execProg  + ' --sequential -d ' + self.standardOptions['runDBname'] \
                                                + ' -t ' + self.standardOptions['runTableName']
       if(self.standardOptions['outputDir'] != ''): 
         runCommand = runCommand + ' -o ' + self.standardOptions['outputDir']
