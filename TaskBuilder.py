@@ -59,7 +59,7 @@ def testRunDataFile(runTemplateFile,runData):
   #
   # 
   try :
-    f = open(runTemplateFile,'rU')
+    f = open(runTemplateFile,'r')
   except IOError as exception:
       print('                 === Error ===')
       print(" Template file cannot be read") 
