@@ -133,7 +133,7 @@ class CaptureOutput(object):
         # and capture dataValue as a string 
         #
         self.outputDataAsString = {}
-        for dataName in list(self.outputData.keys()):
+        for dataName in self.outputKeys:
             for i in range(len(self.outputLines)):
                 comparisonItems = self.outputLines[i].split()
                 comparisonLine = '_'.join(comparisonItems)
@@ -150,16 +150,9 @@ class CaptureOutput(object):
                		if(any(ele == dataName.strip() for ele in stmp.split())):
                		  s = s[1].split()
                		  self.outputDataAsString[dataName] = s[0].strip();
-                    #s = self.outputLines[i].split(':')
-                    #if(s[0].strip() == dataName.strip()):
-                    #    s = s[1].split()
-                    #    self.outputDataAsString[dataName] = s[0].strip();
          
         # pack the data output values into outputData forcing type information
-            
-        self.outputDataKeys = self.outputData.keys()
- 
-        
+
         self.outputData = {}
         for key in list(self.outputDataAsString.keys()):
             dataType = self.outputType[key]
