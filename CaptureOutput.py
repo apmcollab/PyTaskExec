@@ -4,7 +4,10 @@ import sys
 import optparse
 import random
 import time
-import xml.dom.minidom
+ 
+import xml
+import defusedxml.minidom as minidom
+
 import sqlite3
 import os.path
 import re
@@ -65,7 +68,7 @@ class CaptureOutput(object):
             print(exception)
             exit()
       
-        taskBuilderInput   = xml.dom.minidom.parse(f)
+        taskBuilderInput   = minidom.parse(f)
         outputDataElement  = taskBuilderInput.getElementsByTagName('outputData')[0]
 
         parseTask = parseTaskXML()

@@ -6,7 +6,10 @@ import optparse
 from shutil import copyfile
 
 import sqlite3
-import xml.dom.minidom
+
+import xml
+import defusedxml.minidom as minidom
+
 from TaskBuilder import TaskBuilder
 from TaskBuilder import checkForExistingDatabase
 from TaskBuilder import testRunDataFile
@@ -152,8 +155,8 @@ class TaskDbBuilder(object):
       print(" XML file cannot be read") 
       print(exception)
       exit()
-      
-    taskBuilderInput = xml.dom.minidom.parse(f)
+    
+    taskBuilderInput = minidom.parse(f)
 
     jobDataElement       = taskBuilderInput.getElementsByTagName('jobData')[0]
     runParametersElement = taskBuilderInput.getElementsByTagName('runParameters')[0]
@@ -332,7 +335,7 @@ class TaskDbBuilder(object):
   def extractJobData(self,dictElement):
     """
 
-    """
+    """ #defusedxml.minidom
     parseTask = parseTaskXML()
     dictArray = {}
     fileNameList = None
